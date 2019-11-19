@@ -3,7 +3,7 @@
 using namespace std;
 
 void imprimeTbl();
-void imprimeCL(string entrada, int estado, int posicao);
+void imprimeCL(string entrada, int estadoAtual, int posicao);
 void Resultado(bool aceito, string casoTeste);
 
 struct Transicao{
@@ -18,6 +18,7 @@ struct Regra{
 
 //***
 int main() {
+	
 	imprimeTbl();
 
 	return 0;
@@ -26,36 +27,37 @@ int main() {
 
 void imprimeTbl(){
 
-	int tamAlfabeto = 0;
-	int estadoFinal = 0;
-	int tamEstados = 0;
+	int estadoFinal = 1;
+	int tamEstados = 2;
 	
 	
-	// char alfabeto[tamAlfabeto];
 	// string alfabeto("01");
-	string alfabeto;
+	string alfabeto("01");
+
+  string casoTeste("00010110");
+
+  Regra Estado[tamEstados];
+  
+	// CASOS DE TESTES de exemplo
+  //Cadeia com numero par de 0s
+ 
+	Estado[1].transicao[0].simbolo = '0'; //Ex. Estado(1) com simbolo de transição 0 
+	Estado[1].transicao[0].proximoEstado = 2; // continua no estado(1)
+	Estado[1].transicao[1].simbolo = '1';
+	Estado[1].transicao[1].proximoEstado = 1;
+
+	Estado[2].transicao[0].simbolo = '0';
+	Estado[2].transicao[0].proximoEstado = 1;
+	Estado[2].transicao[1].simbolo = '1';
+	Estado[2].transicao[1].proximoEstado = 2;
 
 
-	cout << "\n\n----SIMULADOR DE AUTOMATO FINITO----\n" << endl;
-
-	cout << "\n1. Informe o tamanho do alfabeto: " << endl;
-	cin >> tamAlfabeto;
-
+	cout << "----SIMULADOR DE AUTOMATO FINITO----\n" << endl;
 	
-	cout << "\n2. Informe os símbolos do alfabeto (sem espaços): " << endl;
+	cout << "\n1. Informe os símbolos do alfabeto (sem espaços): " << endl;
 	cin >> alfabeto;
 	
-	/*
-	char aux;
-	for(int i = 0;i < tamAlfabeto;i++){
-		cin >> aux;
-		if(aux != '0'){
-			alfabeto[i] = aux;
-		}else{
-			break;
-		}
-	}
-	*/
+
 	
 	cout << "\n--- Alfabeto: {";
 	for(int i = 0; i < alfabeto.length(); i++){
@@ -66,55 +68,39 @@ void imprimeTbl(){
 	}
 	cout << "} ---" <<endl;
 	
-	cout << "\n3. Informe o número de Estados: " << endl;
+	cout << "\n2. Informe a quatidade de Estados: " << endl;
 	cin >> tamEstados;
 
-	cout << "\n4. Digite o numero do estado correspondente ao ESTADO FINAL: " << endl;
-	for(int i = 0;i < tamEstados;i++){
-		cout << "Estado(" << i << "): Digite " << i+1 << endl;
+	cout << "\n3. Digite o numero do estado correspondente ao ESTADO FINAL: " << endl;
+	for(int i = 1;i <= tamEstados;i++){
+		cout << "Estado(" << i << "): Digite " << i << endl;
 	}
 	cin >> estadoFinal;
 
 	cout << "\n--- Estado Final: " << estadoFinal << " ---" << endl;
 
- 	//estadoFinal = tamEstados;
-
 	cout << "\n--- Transições ---" << endl;
 
-	Regra regra[tamEstados];
-	// CASOS DE TESTES
- /*
-	regra[0].transicao[0].simbolo = '0';
-	regra[0].transicao[0].proximoEstado = 0;
-	regra[0].transicao[1].simbolo = '1';
-	regra[0].transicao[1].proximoEstado = 1;
+	
+	
 
-	regra[1].transicao[0].simbolo = '0';
-	regra[1].transicao[0].proximoEstado = 1;
-	regra[1].transicao[1].simbolo = '1';
-	regra[1].transicao[1].proximoEstado = 0;
-	*/
-
-	cout << "\n5. Informe as transições de cada estado: " << endl;
-	for(int i = 0;i < tamEstados;i++){
+	cout << "\n4. Informe as transições de cada estado: " << endl;
+	for(int i = 1;i <= tamEstados;i++){
 		for(int j = 0; j < alfabeto.length(); j++){
 			cout << "Estado "  << i << " com transição em \"" << alfabeto[j] << "\" muda para o Estado:" <<endl;
-			// regra[i].Alfabeto[j] = alfabeto[j];
-			regra[i].transicao[j].simbolo = alfabeto[j];
-			cin >> regra[i].transicao[j].proximoEstado;
+			// Estado[i].Alfabeto[j] = alfabeto[j];
+			Estado[i].transicao[j].simbolo = alfabeto[j];
+			cin >> Estado[i].transicao[j].proximoEstado;
 		}
 	}
 	cout << "\n=============================" << endl;
 
-	// CASO DE TESTE
-	string casoTeste("0000111");
-	cout << "\n6. Informe o caso de teste: " << endl;
+	
+	cout << "\n5. Informe o caso de teste: " << endl;
 	cin >> casoTeste;
 
 	cout << "\n--- Tamanho da entrada: " << casoTeste.length() << " ---\n" << endl;
 
-
-	//alfabeto = "01";
 
 	char elemento;
 	
@@ -136,54 +122,48 @@ void imprimeTbl(){
 		}
 	}
 
-	int posicao = 0, estadoAtual = 0;
+	int posicao = 0, estadoAtual = 1;
 
 	while(aceito){
 
 		cout << "\n=== MUDANÇAS DE ESTADO ===" << endl;
-		for(int i = 0; i < casoTeste.length() && aceito == true; i++,posicao++){
+		for(int i = 0; i <= casoTeste.length(); i++,posicao++){
 
 			imprimeCL(casoTeste, estadoAtual, posicao);
 
 			elemento = casoTeste[i];
 
 			for(int j = 0; j < alfabeto.length(); j++){
-				if(regra[estadoAtual].transicao[j].simbolo == elemento){
-					estadoAtual = regra[estadoAtual].transicao[j].proximoEstado;
+				if(Estado[estadoAtual].transicao[j].simbolo == elemento){
+					estadoAtual = Estado[estadoAtual].transicao[j].proximoEstado;
 					//cout << "EstadoAtual: " << estadoAtual << endl;
 				}
-				if(true){}
+				if(posicao == casoTeste.length()){ //Fim do Teste
+          if(estadoFinal == estadoAtual){
+            cout << "=== Fim do teste ===" << endl;
+            aceito = true;
+            break;
+          }else{
+            cout << "=== Fim do teste ===" << endl;
+            aceito = false;
+            break;
+          }
+        }
 			}
 		}
-		imprimeCL(casoTeste, estadoAtual, posicao);
 		break;
 	}
 		
 	Resultado(aceito,casoTeste);
+ } // Fim Função AFD
 
-
-	/*
-	for(int i = 0;i < tamEstados;i++){
-		for(int j = 0; j <alfabeto.length(); j++){
-			// cout << regra[j].Alfabeto << endl;
-			if(i == regra[i].transicao.proximoEstado){
-			cout << "ESTADO "<< i << " com \"" << alfabeto[j] << "\" fica no Estado: " << regra[i].transicao.proximoEstado << endl;
-			}else{
-			cout << "ESTADO "<< i << " com \"" << alfabeto[j] << "\" vai para o Estado: " << regra[i].transicao.proximoEstado << endl;
-			}
-		}
-		cout << "===" << endl;
-	}
-	*/
- } //
-
-void imprimeCL(string entrada, int estado, int posicao) {
+void imprimeCL(string entrada, int estadoAtual, int posicao) {
 	cout << posicao << ": ";
 	for(int i = 0; i < posicao; i++){
 		cout << entrada[i];
 	}
 
-	cout << "[q" << estado << "]";
+	cout << "[q" << estadoAtual << "]";
 
 	for(int j = posicao; j <= entrada.length(); j++){
 		cout << entrada[j];
